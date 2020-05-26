@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Fragment} from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Header, Icon, List, Container } from 'semantic-ui-react';
 import axios from 'axios'
 import { IActivity } from '../models/activity';
@@ -12,8 +12,9 @@ const App = () => {
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
   const [editMode, setEditMode] = useState(false);
 
-  const handleSelectActivity = (id:string) => {
-    setSelectedActivity(activities.filter( a => a.id == id)[0])
+  const handleSelectActivity = (id: string) => {
+    setSelectedActivity(activities.filter(a => a.id == id)[0])
+    setEditMode(false);
   }
 
   const handleOpenCreateForm = () => {
@@ -21,31 +22,55 @@ const App = () => {
     setEditMode(true)
   }
 
-  useEffect( () => {
+  const handleCreateActitvity = (activity: IActivity) => {
+    setActivities([...activities, activity]);
+    setSelectedActivity(activity);
+    setEditMode(false);
+  }
 
-    axios.get<IActivity[]>('https://localhost:44395/api/activities').then((values)=>{
+  const handleEditActivity = (activity: IActivity) => {
+    setActivities([...activities.filter(a => a.id !== activity.id), activity]);
+    setSelectedActivity(activity);
+    setEditMode(false);
+  } 
+
+  const handleDeleteActivity = (id:string) => {
+    setActivities([...activities.filter(a => a.id !== id)])
+  }
+
+  useEffect(() => {
+
+    axios.get<IActivity[]>('https://localhost:44395/api/activities').then((values) => {
+      let activities: IActivity[] = [];
+      values.data.forEach( activity => {
+          activity.date = activity.date.split('.')[0];
+          activities.push(activity);
+      });
       setActivities(values.data);
     });
 
   }, []);
-  
+
   return (
 
-      <Fragment>
-       <NavBar openCreateForm={handleOpenCreateForm}/>
-        <Container style={{marginTop: '7em'}}>
-         <ActivityDashboard 
+    <Fragment>
+      <NavBar openCreateForm={handleOpenCreateForm} />
+      <Container style={{ marginTop: '7em' }}>
+        <ActivityDashboard
           activities={activities}
-          selectActivity={handleSelectActivity} 
+          selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
           setSelectedActivity={setSelectedActivity}
           editMode={editMode}
-          setEditMode={setEditMode}/>
-        </Container>
-      </Fragment>
+          setEditMode={setEditMode} 
+          createActivity={ handleCreateActitvity }
+          editActivity={handleEditActivity} 
+          deleteActivity={handleDeleteActivity}/>
+      </Container>
+    </Fragment>
   );
-  
-  
+
+
 }
 
 export default App;
