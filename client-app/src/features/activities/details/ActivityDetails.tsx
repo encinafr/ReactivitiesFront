@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Card, Image, Button } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/activity';
+import ActivityStore from '../../../app/stores/activityStore'
+import { observer } from 'mobx-react-lite';
 
 interface IProps {
-    activity: IActivity,
-    setEditMode: (editMode: boolean) => void,
     setSelectedActivity: (activity: IActivity | null) => void
 }
 
-const ActivityDetails: React.FC<IProps> = ({ activity, setEditMode, setSelectedActivity}) => {
+const ActivityDetails: React.FC<IProps> = ({ setSelectedActivity}) => {
+    const activityStore = useContext(ActivityStore);
+    const {selectedActivity: activity} = activityStore;
+
     return (
         <div>
             <Card fluid>
@@ -24,8 +27,8 @@ const ActivityDetails: React.FC<IProps> = ({ activity, setEditMode, setSelectedA
                 </Card.Content>
                 <Card.Content extra>
                     <Button.Group widths={2}>
-                        <Button onClick={ () => setEditMode(true)} basic color='blue' content='Edit' />
-                        <Button onClick={ () => setSelectedActivity(null)} basic color='grey' content='Cancel' />
+                        <Button onClick={ () => activityStore.editMode = true} basic color='blue' content='Edit' />
+                        <Button onClick={ () => activityStore.selectActivity = Object()} basic color='grey' content='Cancel' />
                     </Button.Group>
                 </Card.Content>
             </Card>
@@ -33,5 +36,5 @@ const ActivityDetails: React.FC<IProps> = ({ activity, setEditMode, setSelectedA
     );
 };
 
-export default ActivityDetails;
+export default observer(ActivityDetails);
 
