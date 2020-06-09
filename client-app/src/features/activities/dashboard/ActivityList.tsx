@@ -1,15 +1,13 @@
-import React, { SyntheticEvent, useContext } from 'react';
-import { Item, Image, Button, Label, Segment } from 'semantic-ui-react';
-import { IActivity } from '../../../app/models/activity';
+import React, { useContext } from 'react';
+import { Item, Button, Label, Segment } from 'semantic-ui-react';
 import { observer } from 'mobx-react-lite';
 import ActivityStore from '../../../app/stores/activityStore'
-import { link } from 'fs';
 import { Link } from 'react-router-dom';
 
 
 const ActivityList: React.FC = () => {
         const activityStore = useContext(ActivityStore);
-        const {activitiesByDate, selectActivity, deleteActivity, submitting, target} = activityStore;
+        const {activitiesByDate, deleteActivity, submitting, target} = activityStore;
     return (
         <Segment clearing>
             <Item.Group divided>
