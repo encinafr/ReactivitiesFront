@@ -3,6 +3,8 @@ import { Item, Image, Button, Label, Segment } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/activity';
 import { observer } from 'mobx-react-lite';
 import ActivityStore from '../../../app/stores/activityStore'
+import { link } from 'fs';
+import { Link } from 'react-router-dom';
 
 
 const ActivityList: React.FC = () => {
@@ -21,7 +23,7 @@ const ActivityList: React.FC = () => {
                                 <div>{activity.city}, {activity.venue}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue' />
+                                <Button as={Link} to={`activities/${activity.id}`} floated='right' content='View' color='blue' />
                                 <Button
                                     onClick={(e) => deleteActivity(e, activity.id)}
                                     loading={target === activity.id && submitting}

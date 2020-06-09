@@ -1,20 +1,15 @@
 import React, { useContext } from 'react';
 import { Grid } from 'semantic-ui-react';
-import { IActivity } from '../../../app/models/activity';
 import ActivityList from './ActivityList';
 import ActivityDetails from '../details/ActivityDetails';
 import ActivityForm from '../form/ActivityForm';
 import { observer } from 'mobx-react-lite';
-import ActivityStore from '../../../app/stores/activityStore'
+import ActivityStore from '../../../app/stores/activityStore';
 
-interface IProps {
-    activities: IActivity[],
-}
-
-const ActivityDashboard: React.FC<IProps> = () => {
+const ActivityDashboard: React.FC = () => {
 
     const activityStore = useContext(ActivityStore);
-    const { editMode, selectedActivity } = activityStore;
+    const { editMode, activity, activities } = activityStore;
 
     return (
         <Grid>
@@ -22,11 +17,11 @@ const ActivityDashboard: React.FC<IProps> = () => {
                 <ActivityList />
             </Grid.Column>
             <Grid.Column width={6}>
-                {selectedActivity && !editMode &&
+                {activity && !editMode &&
                     (<ActivityDetails />)}
                 {editMode && (<ActivityForm
-                    key={selectedActivity?.id || 0}
-                    activity={selectedActivity!}
+                    key={activity?.id || 0}
+                    activity={activity!}
                 />)}
             </Grid.Column>
         </Grid>
