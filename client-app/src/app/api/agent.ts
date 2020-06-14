@@ -1,8 +1,15 @@
 import axios, { AxiosResponse } from "axios"
 import { IActivity } from "../models/activity";
 import { resolve } from "dns";
+import { error } from "console";
 
 axios.defaults.baseURL = 'https://localhost:44395/api';
+
+axios.interceptors.response.use(undefined, error => {
+    if(error.response.status === 404){
+        throw error.response;
+    }
+});
 
 const respondBody = (response:AxiosResponse) => response.data;
 const sleep = (ms: number) => (response:AxiosResponse) => new Promise<AxiosResponse>(resolve => setTimeout(() => resolve(response), ms));
