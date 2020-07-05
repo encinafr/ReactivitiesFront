@@ -1,14 +1,27 @@
 import axios, { AxiosResponse } from "axios"
 import { IActivity } from "../models/activity";
-import { resolve } from "dns";
-import { error } from "console";
+import { history } from '../..';
+import { toast } from "react-toastify";
 
 axios.defaults.baseURL = 'https://localhost:44395/api';
 
 axios.interceptors.response.use(undefined, error => {
-    if(error.response.status === 404){
-        throw error.response;
+
+    if(error.message === 'Network Error' && !error.response){
+        toast.error('Network error - make sure API is running ');
     }
+
+    const {status, data, config} = error.response;
+    if(status === 404){
+        history.push('/notfound');
+    }
+
+    if(status === 400 && config.method === 'get' && data.errors.hasOwnProperty('id')){
+        history.push('/notfound');
+    }
+
+    if(status === 500)
+        toast.error('Internal Server error');
 });
 
 const respondBody = (response:AxiosResponse) => response.data;
