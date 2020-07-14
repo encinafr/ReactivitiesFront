@@ -20,7 +20,7 @@ class ActivityStore {
     const sortedActivities = activities.sort((a, b) => a.date!.getTime() - b.date!.getTime());
 
     return Object.entries(sortedActivities.reduce((activities, activity) => {
-      const date = activity.date!.toISOString().split('T')[0];
+      const date = activity.date.toISOString().split('T')[0];
       activities[date] = activities[date] ? [...activities[date], activity] : [activity];
       return activities;
     }, {} as {[key: string]: IActivity[]}));
@@ -32,7 +32,7 @@ class ActivityStore {
       const activities = await agent.Activities.list();
       runInAction('loading activities', () => {
         activities.forEach(activity => {
-          activity.date = new Date(activity.date!);
+          activity.date = new Date(activity.date);
           this.activityRegistry.set(activity.id, activity);
         });
         this.loadingInitial = false;
@@ -48,17 +48,21 @@ class ActivityStore {
 
   @action loadActivity = async (id: string) => {
     let activity = this.getActivity(id);
-    if (activity)
+    if (activity){
       this.activity = activity;
+      return activity;
+    }
     else
       this.loadingInitial = true;
     try {
       activity = await agent.Activities.details(id);
       runInAction('getting activity', () => {
-        activity.date = new Date(activity.date!);
+        activity.date = new Date(activity.date);
         this.selectActivity = activity;
         this.loadingInitial = false;
       })
+      return activity;
+
     } catch (error) {
       runInAction('logged error', () => {
         this.loadingInitial = false;
