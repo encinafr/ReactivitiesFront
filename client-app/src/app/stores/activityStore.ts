@@ -5,10 +5,12 @@ import agent from '../api/agent';
 import { useHistory } from 'react-router-dom';
 import { history } from '../..';
 import { toast } from 'react-toastify';
+import { RootStore } from './rootStore';
 
 configure({ enforceActions: 'always' });
 
-class ActivityStore {
+export default class ActivityStore {
+  rootStore: RootStore;
   @observable activityRegistry = new Map();
   @observable activity: IActivity | null = null;
   @observable loadingInitial = false;
@@ -17,6 +19,13 @@ class ActivityStore {
 
   @computed get activitiesByDate() {
     return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()))
+  }
+
+  /**
+   *Instancia de rootStore
+   */
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
   }
 
   groupActivitiesByDate(activities: IActivity[]) {
@@ -156,4 +165,3 @@ class ActivityStore {
   };
 }
 
-export default createContext(new ActivityStore());
